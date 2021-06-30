@@ -1,0 +1,104 @@
+<%- include('header', user)  %>    
+
+<div class="navigation">
+  <a href="/status/<%= user.uuid %>" class="navigation-button">STATUS</a>
+  <a href="/inventory/<%= user.uuid %>" class="navigation-button">INVENTORY</a>
+  <a href="/perks/<%= user.uuid %>" class="navigation-button active">PERKS</a>
+  <a href="/map/<%= user.uuid %>" class="navigation-button">MAP</a>
+  <a href="/radio/<%= user.uuid %>" class="navigation-button">RADIO</a>
+</div>
+
+<div class="inventory">
+  <div class="item inventory-list">
+        <table style="width: 100%">
+          <tr>
+            <th>NAME</th>
+            <th>VALUE</th>
+          </tr>
+
+          <% 
+          let x = 0; 
+          let y = 0; 
+          let perk;
+          for (var school in user.cards) {
+            if (user.cards.hasOwnProperty(school)) {
+              user.cards[school].forEach( (item) => { 
+                 cards.forEach( (card) => {
+                  if(card.name == item.name) perk = card;
+                } ) 
+                y++;
+          %>
+          <tr id="item<%=y%>" class="hover-green" onclick="set_active('item<%=y%>'); updateItem(<%= JSON.stringify(perk) %> );">
+            <td><%= item.name %></td>
+            <td><%= perk.cost %></td>
+          </tr>
+
+          <% } ) } } %>
+        </table>
+      </div>
+      <div class="item-display item" >
+        <% if(perk) { %>
+        <div class="image-display">
+          <img
+          id="selected-item-image"
+          height="30%"
+          src="http://secondlife.com/app/image/<%= perk.uuid %>/2"
+        />
+        </div>
+        
+        <div class="item-info">
+          <b id="selected-item-name"><%= perk.name %></b>
+          <hr />
+          <p id="selected-item-desc"><%= perk.desc %></p>
+          <div class="itemOptions" id="itemoptions">
+            <a class="itemOptions-button" href="#">REMOVE</a>
+            <a class="itemOptions-button" href="#">ALL</a>
+            <a class="itemOptions-button" onclick="show(<%= JSON.stringify(user.uuid) %>)">SHOW</a>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <div id="datadiv" data-test="<%= JSON.stringify(user) %>"></div>
+    <div id="perkdatadiv" data-test="<%= JSON.stringify(perk) %>"></div>
+    <script>
+      let userdata = JSON.parse(document.getElementById('datadiv').dataset.test)
+      let perk = JSON.parse(document.getElementById('perkdatadiv').dataset.test)
+      let selected_item;
+      show = (uuid, num) => {
+        let url = "/showperk/" + uuid + "/" + encodeURIComponent(selected_item.name) + "/" + encodeURIComponent(selected_item.desc);
+        console.log(url)
+        window.location.replace(url);
+      }
+      updateItem = (item) => {
+        selected_item = item;
+        sessionStorage.setItem("perk", JSON.stringify(item));
+        document.getElementById("selected-item-name").innerHTML = item.name;
+        document.getElementById("selected-item-desc").innerHTML = item.desc;
+        document.getElementById("selected-item-image").src =
+          "http://secondlife.com/app/image/" + item.uuid + "/2";
+      };
+      set_active = (id) => {
+            // document.getElementsByClassName("hover-green-active").classList.remove("hover-green-active");
+            var all = document.getElementsByClassName("hover-green-active");
+            for (var i = 0; i < all.length; i++) {
+              all[i].classList.remove("hover-green-active");
+            }
+            document.getElementById(id).classList.add("hover-green-active");
+            sessionStorage.setItem("active_perk_id", id);
+          }
+        set_item_from_memory = async (user) =>{
+        let item = sessionStorage.getItem("perk");
+        let id = sessionStorage.getItem("active_perk_id");
+        if(id)
+          document.getElementById(id).classList.add("hover-green-active");
+        if(item){
+          updateItem(JSON.parse(item), user);
+        } else{
+          updateItem(perk, user);
+        } 
+      }
+      window.onload = set_item_from_memory(userdata);
+    </script>
+  </body>
+</html>

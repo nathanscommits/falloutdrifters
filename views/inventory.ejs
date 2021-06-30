@@ -1,0 +1,137 @@
+<%- include('header', user)  %>    
+<div class="navigation">
+  <a href="/status/<%= user.uuid %>" class="navigation-button">STATUS</a>
+  <a href="/inventory/<%= user.uuid %>" class="navigation-button active">INVENTORY</a>
+  <a href="/perks/<%= user.uuid %>" class="navigation-button">PERKS</a>
+  <a href="/map/<%= user.uuid %>" class="navigation-button">MAP</a>
+  <a href="/radio/<%= user.uuid %>" class="navigation-button">RADIO</a>
+</div>
+<div id="datadiv" data-test="<%= JSON.stringify(user) %>"></div>
+
+    <div onload="" class="inventory">
+      <div class="item inventory-list">
+        <table style="width: 100%">
+          <tr>
+            <th></th>
+            <th>NAME</th>
+            <th>VALUE</th>
+          </tr>
+
+          <% let x = 0; let y = 0; user.inventory.forEach( (item) => { 
+            y++;
+            let vis = 'hidden';
+              if(item.name === user.equipped.weapon.name || item.name === user.equipped.armor.name){
+                vis = 'visible';
+              }
+            %>
+
+          <tr id="item<%=y%>" class="hover-green" onclick="something_selected = true; updateItem(<%= JSON.stringify(item) %>, <%= JSON.stringify(user) %>); set_active('item<%=y%>');" onmouseover="hovering(<%= JSON.stringify(item) %>)" >
+            <td><img class="selected-square" style="visibility: <%= vis %>;" src="/img/square.svg" /></td>
+            <td><%= item.name %></td>
+            <td><%= item.cost %></td>
+          </tr>
+
+          <% } ) %>
+        </table>
+      </div>
+      <div class="item-display item">
+        <% if(user.inventory.length > 0) { %>
+        <div class="image-display">
+          <img
+            id="selected-item-image"
+            src="http://secondlife.com/app/image/<%= user.inventory[x].uuid %>/2"
+          />
+        </div>
+
+        <div class="item-info">
+          <b id="selected-item-name"></b>
+          <hr />
+          <br />
+          <p id="selected-item-desc"></p>
+          <div class="itemOptions" id="itemoptions">
+            <a class="itemOptions-button" href="#">SCRAP</a>
+            <a class="itemOptions-button" href="#">TRADE</a>
+            <a class="itemOptions-button" id="item-action" href="#">USE</a>
+            <a class="itemOptions-button" onclick="show(<%= JSON.stringify(user.uuid) %>)">SHOW</a>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <script>
+      let userdata = JSON.parse(document.getElementById('datadiv').dataset.test)
+      console.log(userdata);
+      
+      let something_selected = true;
+      let selected_item;
+      show = (uuid, num) => {
+        let url = "/show/" + uuid + "/" + encodeURIComponent(selected_item.name) + "/" + encodeURIComponent(selected_item.desc);
+        console.log(url)
+        window.location.replace(url);
+      }
+      hovering = (item) => {
+        if(something_selected) return;
+        updateItem(item, {});
+      }
+      updateItem = (item, user) => {
+        // user = JSON.parse(user)
+        // item = JSON.parse(item)
+        selected_item = item;
+        sessionStorage.setItem("item", JSON.stringify(item));
+        console.log("item stored: ", item)
+        document.getElementById("selected-item-name").innerHTML = item.name;
+        document.getElementById("selected-item-desc").innerHTML = item.desc;
+        if(item.name === user.equipped.weapon.name || item.name === user.equipped.armor.name) {
+          document.getElementById("item-action").innerHTML = "UNEQUIP";
+          let equipped_name = "EQUIPPED "+item.name
+          document.getElementById("selected-item-name").innerHTML = equipped_name;
+        }
+        else if (item.type === "item"){
+          document.getElementById("item-action").innerHTML = "USE";
+        }
+        else{
+          document.getElementById("item-action").innerHTML = "EQUIP";
+        }
+        document.getElementById("selected-item-image").src = "http://secondlife.com/app/image/" + item.uuid + "/2";
+      };
+      setHidden = (classname) => {
+        var all = document.getElementsByClassName(classname);
+        for (var i = 0; i < all.length; i++) {
+          all[i].style.visibility = 'hidden';
+          all[i].style.position = 'absolute';
+        }
+      };
+      itemOptions = (item, id) => {
+        console.log(item);
+        setHidden("dropdown");
+        document.getElementById("itemoptions").style.visibility = "visible";
+        document.getElementById("itemoptions").style.position = "relative";
+      }
+      set_active = (id) => {
+        // document.getElementsByClassName("hover-green-active").classList.remove("hover-green-active");
+        var all = document.getElementsByClassName("hover-green-active");
+        for (var i = 0; i < all.length; i++) {
+          all[i].classList.remove("hover-green-active");
+        }
+        document.getElementById(id).classList.add("hover-green-active");
+        sessionStorage.setItem("active_id", id);
+      }
+      set_item_from_memory = async (user) =>{
+        let item = sessionStorage.getItem("item");
+        let id = sessionStorage.getItem("active_id");
+        if(id)
+          document.getElementById(id).classList.add("hover-green-active");
+        console.log("user retrieved: ", user.inventory[0])
+        console.log("item retrieved: ", item)
+        if(item){
+          console.log("item from storage: ", item)
+          updateItem(JSON.parse(item), user);
+        } else{
+          console.log(user.inventory[0])
+          updateItem(user.inventory[0], user);
+        } 
+      }
+      window.onload = set_item_from_memory(userdata);
+    </script>
+  </body>
+</html>

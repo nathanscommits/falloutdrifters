@@ -1,0 +1,83 @@
+<%- include('header', user)  %>    
+<div class="navigation">
+  <a href="/profile/status/<%= user.uuid %>" class="navigation-button">STATUS</a>
+  <a href="/profile/inventory/<%= user.uuid %>" class="navigation-button active">INVENTORY</a>
+  <a href="/profile/perks/<%= user.uuid %>" class="navigation-button">PERKS</a>
+</div>
+
+    <div onload="" class="inventory">
+      <div class="item inventory-list">
+        <table style="width: 100%">
+          <tr>
+            <th></th>
+            <th>NAME</th>
+            <th>VALUE</th>
+          </tr>
+
+          <% let x = 0; let y = 0; user.inventory.forEach( (item) => { 
+            y++;
+            let vis = 'hidden';
+              if(item.name === user.equipped.weapon.name || item.name === user.equipped.armor.name){
+                vis = 'visible';
+              }
+            %>
+
+          <tr id="item<%=y%>" class="hover-green" onclick="something_selected = true; updateItem(<%= JSON.stringify(item) %>, <%= JSON.stringify(user) %>); set_active('item<%=y%>');" onmouseover="hovering(<%= JSON.stringify(item) %>)" >
+            <td><img class="selected-square" style="visibility: <%= vis %>;" src="/img/square.svg" /></td>
+            <td><%= item.name %></td>
+            <td><%= item.cost %></td>
+          </tr>
+
+          <% } ) %>
+        </table>
+      </div>
+      <div class="item-display item">
+        <% if(user.inventory.length > 0) { %>
+        <div class="image-display">
+          <img
+            id="selected-item-image"
+            src="http://secondlife.com/app/image/<%= user.inventory[x].uuid %>/2"
+          />
+        </div>
+
+        <div class="item-info">
+          <b id="selected-item-name"><%= user.inventory[0].name %></b>
+          <hr />
+          <br />
+          <p id="selected-item-desc"><%= user.inventory[0].desc %></p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <script>
+      
+      let something_selected = true;
+      let selected_item;
+     
+      hovering = (item) => {
+        if(something_selected) return;
+        updateItem(item, {});
+      }
+      updateItem = (item, user) => {
+        // user = JSON.parse(user)
+        // item = JSON.parse(item)
+        selected_item = item;
+        document.getElementById("selected-item-name").innerHTML = item.name;
+        document.getElementById("selected-item-desc").innerHTML = item.desc;
+        if(item.name === user.equipped.weapon.name || item.name === user.equipped.armor.name) {
+          let equipped_name = "EQUIPPED "+item.name
+          document.getElementById("selected-item-name").innerHTML = equipped_name;
+        }
+        document.getElementById("selected-item-image").src = "http://secondlife.com/app/image/" + item.uuid + "/2";
+      };
+      set_active = (id) => {
+        // document.getElementsByClassName("hover-green-active").classList.remove("hover-green-active");
+        var all = document.getElementsByClassName("hover-green-active");
+        for (var i = 0; i < all.length; i++) {
+          all[i].classList.remove("hover-green-active");
+        }
+        document.getElementById(id).classList.add("hover-green-active");
+      }
+    </script>
+  </body>
+</html>

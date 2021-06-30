@@ -1,0 +1,73 @@
+<%- include('header', user)  %>    
+
+<div class="navigation">
+  <a href="/profile/status/<%= user.uuid %>" class="navigation-button">STATUS</a>
+  <a href="/profile/inventory/<%= user.uuid %>" class="navigation-button">INVENTORY</a>
+  <a href="/profile/perks/<%= user.uuid %>" class="navigation-button active">PERKS</a>
+</div>
+
+<div class="inventory">
+  <div class="item inventory-list">
+        <table style="width: 100%">
+          <tr>
+            <th>NAME</th>
+            <th>VALUE</th>
+          </tr>
+
+          <% 
+          let x = 0; 
+          let y = 0; 
+          let perk;
+          for (var school in user.cards) {
+            if (user.cards.hasOwnProperty(school)) {
+              user.cards[school].forEach( (item) => { 
+                 cards.forEach( (card) => {
+                  if(card.name == item.name) perk = card;
+                } ) 
+                y++;
+          %>
+          <tr id="item<%=y%>" class="hover-green" onclick="set_active('item<%=y%>'); updateItem(<%= JSON.stringify(perk) %> );">
+            <td><%= item.name %></td>
+            <td><%= perk.cost %></td>
+          </tr>
+
+          <% } ) } } %>
+        </table>
+      </div>
+      <div class="item-display item" >
+        <% if(perk) { %>
+        <div class="image-display">
+          <img
+          id="selected-item-image"
+          height="30%"
+          src="http://secondlife.com/app/image/<%= perk.uuid %>/2"
+        />
+        </div>
+        
+        <div class="item-info">
+          <b id="selected-item-name"><%= perk.name %></b>
+          <hr />
+          <p id="selected-item-desc"><%= perk.desc %></p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <script>
+      updateItem = (item) => {
+        document.getElementById("selected-item-name").innerHTML = item.name;
+        document.getElementById("selected-item-desc").innerHTML = item.desc;
+        document.getElementById("selected-item-image").src =
+          "http://secondlife.com/app/image/" + item.uuid + "/2";
+      };
+      set_active = (id) => {
+            // document.getElementsByClassName("hover-green-active").classList.remove("hover-green-active");
+            var all = document.getElementsByClassName("hover-green-active");
+            for (var i = 0; i < all.length; i++) {
+              all[i].classList.remove("hover-green-active");
+            }
+            document.getElementById(id).classList.add("hover-green-active");
+          }
+       
+    </script>
+  </body>
+</html>

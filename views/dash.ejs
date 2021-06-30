@@ -1,0 +1,48 @@
+<%- include('header', user)  %>    
+<script>
+  updateItem = (item) => {
+    document.getElementById("selected-item-name").innerHTML = item.name;
+    document.getElementById("selected-item-desc").innerHTML = item.desc;
+    document.getElementById("selected-item-image").src =
+      "http://secondlife.com/app/image/" + item.uuid + "/2";
+  };
+</script>
+    <div class="inventory">
+      <div class="item inventory-list">
+        <table style="width: 100%">
+          <tr>
+            <th>NAME</th>
+            <th>VALUE</th>
+          </tr>
+
+          <% let x = 0; user.inventory.forEach( (item) => { %>
+
+          <tr
+            class="hover-green"
+            onmouseover="updateItem(<%= JSON.stringify(item) %>)"
+          >
+            <td><%= item.name %></td>
+            <td><%= item.caps %></td>
+          </tr>
+
+          <% } ) %>
+        </table>
+      </div>
+      <div class="item-display item">
+        <img
+          id="selected-item-image"
+          width="250px"
+          height="250px"
+          src="http://secondlife.com/app/image/<%= user.inventory[x].uuid %>/2"
+        />
+
+        <div class="item-info">
+          <b id="selected-item-name"><%= user.inventory[x].name %></b>
+          <hr />
+          <br />
+          <p id="selected-item-desc"><%= user.inventory[x].desc %></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

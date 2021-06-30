@@ -1,0 +1,52 @@
+<%- include('header', user)  %>    
+<div class="navigation">
+  <a href="/status/<%= user.uuid %>"  class="navigation-button active">STATUS</a>
+  <a href="/inventory/<%= user.uuid %>" class="navigation-button">INVENTORY</a>
+  <a href="/perks/<%= user.uuid %>" class="navigation-button">PERKS</a>
+  <a href="/map/<%= user.uuid %>" class="navigation-button">MAP</a>
+  <a href="/radio/<%= user.uuid %>" class="navigation-button">RADIO</a>
+</div>
+
+    <div class="inventory">
+      <div class="item inventory-list">
+        <table style="width: 100%">
+
+
+          <%  
+          for (var stat in user.stats) {
+            if (user.stats.hasOwnProperty(stat)) {
+              
+          %>
+          <tr class="hover-green">
+            <td style="text-transform: uppercase;"><%= stat %></td>
+            <td><%= user.stats[stat] %></td>
+          </tr>
+
+          <%} } %>
+          
+          
+
+        </table>
+      </div>
+      <div class="item-display item">
+        <div class="image-display">
+        <img
+          id="selected-item-image"
+          src="/img/FO76_emote_Strength.gif"
+        />
+        </div>
+        <% let level = 1 + user.stats.luck + user.stats.agility + user.stats.strength + user.stats.perception + user.stats.endurance + user.stats.charisma + user.stats.intelligence; %>
+        <div class="item-info">
+          <b><%= user.name %></b>
+          <hr />
+          <br />
+          <p>LEVEL: <%= level %></p>
+          <p>EXP: <%= user.caps %></p>
+          <p> <%= user.hearts %> :MAX HP</p>
+          <p>PROFILE: <%= user.desc %></p>
+          <p>ACCOUNT: <%= user.slname %></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
