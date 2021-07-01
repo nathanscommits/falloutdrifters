@@ -86,6 +86,7 @@ router.get("/radio/:uuid", usersController.checkIP, usersController.loadRadio);
 router.get("/show/:uuid/:item_name/:item_desc", usersController.showItem);
 router.get("/showperk/:uuid/:item_name/:item_desc", usersController.showPerk);
 router.get("/race", usersController.pickRace);
+router.get("/", usersController.pickRace);
 router.post("/raceselected", usersController.raceSelected);
 router.post("/urlupdate", usersController.urlUpdate); 
 router.post("/ipupdate", usersController.ipUpdate); 
