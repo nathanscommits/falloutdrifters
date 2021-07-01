@@ -39,6 +39,7 @@ exports.loadHUD = async (req, res) => {
   console.log(e)
  }
 };
+
 exports.loadInventory = async (req, res) => {
   try{
     let user = await usersCollection.findOne({ uuid: req.params.uuid });
@@ -55,6 +56,7 @@ exports.loadInventory = async (req, res) => {
     console.log(e)
   }
 };
+
 exports.loadPerks = async (req, res) => {
   try{
     let user = await usersCollection.findOne({ uuid: req.params.uuid });
@@ -71,6 +73,7 @@ exports.loadPerks = async (req, res) => {
     console.log(e)
    }
 };
+
 exports.loadStatus = async (req, res) => {
   try{
     let user = await usersCollection.findOne({ uuid: req.params.uuid });
@@ -130,6 +133,7 @@ exports.loadStatus = async (req, res) => {
     console.log(e)
    }
 };
+
 exports.loadMap = async (req, res) => {
   try{
     let user = await usersCollection.findOne({ uuid: req.params.uuid });
@@ -146,6 +150,7 @@ exports.loadMap = async (req, res) => {
     console.log(e)
    }
 };
+
 exports.loadRadio = async (req, res) => {
   try{
     let user = await usersCollection.findOne({ uuid: req.params.uuid });
@@ -163,7 +168,6 @@ exports.loadRadio = async (req, res) => {
    }
 };
 
-
 exports.urlUpdate = async (req, res) => {
   try {
     await usersCollection.updateMany(
@@ -178,6 +182,7 @@ exports.urlUpdate = async (req, res) => {
     console.log(e);
   }
 };
+
 exports.ipUpdate = async (req, res) => {
   try {
     await usersCollection.updateMany(
@@ -208,6 +213,7 @@ function send_req(url, postData) {
     return;
   });
 }
+
 exports.postTest = async (req, res) => {
   let user = await usersCollection.findOne({ slname: "sharky.piggins" });
   // console.log(req);
@@ -219,6 +225,7 @@ exports.postTest = async (req, res) => {
   });
   res.send("sent");
 };
+
 exports.showItem = async (req, res, next) => {
   try{
     let user = await usersCollection.findOne({ uuid: req.params.uuid });
@@ -232,6 +239,7 @@ exports.showItem = async (req, res, next) => {
     console.log(e)
   }
 };
+
 exports.showPerk = async (req, res, next) => {
   try{
     let user = await usersCollection.findOne({ uuid: req.params.uuid });
