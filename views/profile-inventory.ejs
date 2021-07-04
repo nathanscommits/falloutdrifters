@@ -36,7 +36,7 @@
         <div class="image-display">
           <img
             id="selected-item-image"
-            src="http://secondlife.com/app/image/<%= user.inventory[x].uuid %>/2"
+            src="/img/10mm_Pistol.png"
           />
         </div>
 
@@ -68,7 +68,7 @@
           let equipped_name = "EQUIPPED "+item.name
           document.getElementById("selected-item-name").innerHTML = equipped_name;
         }
-        document.getElementById("selected-item-image").src = "http://secondlife.com/app/image/" + item.uuid + "/2";
+        document.getElementById("selected-item-image").src = "/img/10mm_Pistol.png";
       };
       set_active = (id) => {
         // document.getElementsByClassName("hover-green-active").classList.remove("hover-green-active");

@@ -252,6 +252,7 @@ div#map-container {
   height: 100%;
 }
 
+
 .item-info p {
   font-weight: 400;
   font-size: 1vw;
@@ -373,6 +374,40 @@ filter: brightness(0%);
   padding-left: 5%;
   padding-right: 5%;
 }
+
+.center-div {
+  display: grid;
+    place-items: center;
+    height: 80vh;
+}
+
+.center-div input {
+  background-color: black;
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.center-p{
+  text-align: center;
+}
+
+
+.status-display {
+  height: 60vh;
+}
+.status-display img{
+  height: 100%;
+}
+
+.status-form{
+  height: 100%;
+}
+.status-form  tr td{
+  width: 10%;
+  text-align: center;
+  overflow: hidden;
+}
+
 
 @media only screen and (max-width: 700px) {
   /* body {

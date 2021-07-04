@@ -46,17 +46,20 @@ default
             else if (method == URL_REQUEST_GRANTED) {
                 send_req("urlupdate", llList2Json(JSON_OBJECT, [
                     "url", body,
-                    "uuid", llGetOwner()
+                    "uuid", llGetOwner(),
+                    "slname", llKey2Name(llGetOwner())
                 ]));
             }
         } else if( id == HTTP_REQUEST_ID) {
+            //url updated in server, ask how they want to open the HUD here
+            llLoadURL(llGetOwner(), "Do you want to open the HUD in your browser?", URL+llGetOwner());
             llOwnerSay("url " + body);
         } else {
             llOwnerSay(body);
-            if(llJsonGetValue(body, ["ip"]) != JSON_INVALID) {
+            if(llJsonGetValue(body, ["token"]) != JSON_INVALID) {
                 HANDLE = llListen(MENU_CHANNEL, "", llGetOwner(), "");
-                IP_ADD = llJsonGetValue(body, ["ip"]);
-                llDialog(llGetOwner(), "A new IP address is trying gain access to your account, allow it?", ["ALLOW", "DENY"], MENU_CHANNEL);
+                IP_ADD = llJsonGetValue(body, ["token"]);
+                llDialog(llGetOwner(), "A new browser is trying gain access to your account, allow it?", ["ALLOW", "DENY"], MENU_CHANNEL);
             }
             if(llJsonGetValue(body, ["ownersay"]) != JSON_INVALID)
                 llOwnerSay(llJsonGetValue(body, ["ownersay"]));
@@ -70,13 +73,15 @@ default
     listen( integer channel, string name, key id, string str )
     {
         if(str == "ALLOW") {
-            llDialog(llGetOwner(), "Allowing this IP will give them complete access to your account, are you sure you want to do this?", ["YES", "NO"], MENU_CHANNEL);
+            llDialog(llGetOwner(), "Allowing this will give the browser complete access to your account, are you sure you want to do this?", ["YES", "NO"], MENU_CHANNEL);
         } else if(str == "YES") {
-            llOwnerSay("New IP registered. Reload your HUD.");
+            llOwnerSay();
+            llLoadURL(llGetOnwer(), "New Browser registered. Reload your HUD.", URL+llGetOwner());
             llListenRemove(HANDLE);
-            send_req("ipupdate", llList2Json(JSON_OBJECT, [
-                "ip", IP_ADD,
-                "uuid", llGetOwner()
+            send_req("tokenupdate", llList2Json(JSON_OBJECT, [
+                "token", IP_ADD,
+                "uuid", llGetOwner(),
+                "slname", llName2Key(llGetOwner())
             ]));
         }
     }

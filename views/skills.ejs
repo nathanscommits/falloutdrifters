@@ -30,29 +30,22 @@
         </table>
       </div>
       <div class="item-display item">
-        <div class="status-display">
-          <table class="status-form">
-            <tr>
-              <td> </td>
-              <td>▄▄▄▄▄▄</td>
-              <td> </td>
-              </tr>
-            <tr>
-              <td>▄▄▄▄▄▄</td>
-              <td><img
+        <div class="image-display">
+        <img
           id="selected-item-image"
-          src="/img/walk.gif"
-        /></td>
-              <td>▄▄▄▄▄▄</td>
-            </tr>
-            <tr>
-              <td>▄▄▄▄▄▄</td>
-              <td>▄▄▄▄▄▄</td>
-              <td>▄▄▄▄▄▄</td>
-            </tr>
-
-          </table>
-        
+          src="/img/FO76_emote_Strength.gif"
+        />
+        </div>
+        <% let level = 1 + user.stats.luck + user.stats.agility + user.stats.strength + user.stats.perception + user.stats.endurance + user.stats.charisma + user.stats.intelligence; %>
+        <div class="item-info">
+          <b><%= user.name %></b>
+          <hr />
+          <br />
+          <p>LEVEL: <%= level %></p>
+          <p>EXP: <%= user.caps %></p>
+          <p> <%= user.hearts %> :MAX HP</p>
+          <p>PROFILE: <%= user.desc %></p>
+          <p>ACCOUNT: <%= user.slname %></p>
         </div>
       </div>
     </div>

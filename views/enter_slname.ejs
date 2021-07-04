@@ -20,19 +20,13 @@
     <link href="/main.css" rel="stylesheet" />
   </head>
   <body>
-    <div class="topnav">
-      <a class="active" href="#home"><%= user.name %> </a>
-
-      <div class="topnav-right">
-        <a href="#search">
-          <img height="50px" width="50px" src="/img/card.svg" /> <%= user.perknum %>/25</a>
-        <a href="#search">
-          <img height="50px" width="50px" src="/img/weight.svg" /> <%=
-          user.inventory.length %>/10</a
-        >
-        <a href="#about"
-          ><img height="50px" width="50px" src="/img/caps.svg" /> <%= user.caps
-          %></a
-        >
-      </div>
-    </div>
+      <div class="center-div">
+    <form action="/slname" method="post">
+        <label for="slname">SL USERNAME:</label>
+        <input type="text" id="slname" name="slname">
+        <input type="submit" value=">">
+    </form>
+</div>
+<p class="center-p"><i><small>Your SL username will be the only piece of data we will store from you. yada yada privacy yada yada compliance.</small></i></p>
+</body>
+</html>

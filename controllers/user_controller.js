@@ -1,27 +1,85 @@
 const usersCollection = require("../db").db().collection("users");
 const cardsCollection = require("../db").db().collection("cards");
-const adminCollection = require("../db").db().collection("admins");
+const adminCollection = require("../db").db().collection("admins")
+const bcrypt = require('bcryptjs');
+const salt = process.env.SALT;
+//encode
+// var salt = bcrypt.genSaltSync(10);
+// let hash = bcrypt.hashSync(uuid, salt);
+// res.cookie('access_token', hash);
+//compare
+// let access = req.cookies['access_token'];
+//find access key in DB > load that character up
+// bcrypt.compareSync(uuid, hash); 
 
-
-exports.checkIP = async (req, res, next) => {
+exports.checkAccess = async (req, res, next) => {
   try{
-    let user = await usersCollection.findOne({ uuid: req.params.uuid }, { projection: { _id: 0, ip: 1, url: 1 } });
-    if(req.headers.hasOwnProperty('x-forwarded-for') ) {
-      if(user.ip === req.headers['x-forwarded-for']) {
-        //console.log("IP match")
+    let token = req.cookies['access_token'];
+    if(token != null) {
+      let user = await usersCollection.findOne({ token: token });
+      req.user = user;
+      let hash = bcrypt.hashSync(req.params.uuid, salt); //maybe this needs to be async?
+      if(hash === token) {
+        //access granted
         next();
       } else {
-        //console.log("IP does not match")
-        send_req(user.url, {ip: req.headers['x-forwarded-for']})
-        res.send("Requesting access...");
+        //hash doesnt match token?
+        console.log("Error: Hash doesnt match token");
+        res.send("Something went wrong...");  
       }
     } else {
-      console.log("no IP found in headers")
+      //no cookies found, create one
+      let user = await usersCollection.findOne({ uuid: req.params.uuid });
+      send_req(user.url, {token: hash});
+      res.send("Requesting access...You need to be wearing your titler in world.");
     }
+  }catch(e) {
+    console.log(e);
+  }
+}
+
+exports.accessGranted = async (req, res) => {
+  try{
+    let hash = bcrypt.hashSync(req.body.uuid, salt);
+    if(hash == req.body.token) {
+        usersCollection.updateOne({uuid: req.body.uuid}, { $set: {token: hash} }, { upsert: true });
+        res.cookies('access_token', hash);
+        res.redirect('/' + req.body.uuid);
+
+    } else {
+      console.log("Token doesn't match new hash.");
+    }
+  } catch(e) {
+    console.log(e)
+  }
+}
+
+exports.enterName = async (req, res) => {
+  try{
+    res.render('enter_slname');
   } catch(e){
     console.log(e)
   }
 }
+// exports.checkIP = async (req, res, next) => { //need to convert this to use cookies with a token instead of IPs
+//   try{
+//     let user = await usersCollection.findOne({ uuid: req.params.uuid }, { projection: { _id: 0, ip: 1, url: 1 } });
+//     if(req.headers.hasOwnProperty('x-forwarded-for') ) {
+//       if(user.ip === req.headers['x-forwarded-for']) {
+//         //console.log("IP match")
+//         next();
+//       } else {
+//         //console.log("IP does not match")
+//         send_req(user.url, {ip: req.headers['x-forwarded-for']})
+//         res.send("Requesting access...");
+//       }
+//     } else {
+//       console.log("no IP found in headers")
+//     }
+//   } catch(e){
+//     console.log(e)
+//   }
+// }
 
 exports.loadHUD = async (req, res) => {
  try{
@@ -77,58 +135,41 @@ exports.loadPerks = async (req, res) => {
 exports.loadStatus = async (req, res) => {
   try{
     let user = await usersCollection.findOne({ uuid: req.params.uuid });
-    // let cards = await cardsCollection.find({}).toArray();
-    // user.stats = {
-    //   attack: (1 + user.cards.agility.length +  user.cards.strength.length ),
-    //   defense: (1 + user.cards.endurance.length + user.cards.agility.length  ),
-    //   strength: user.cards.strength.length,
-    //   perception: user.cards.perception.length,
-    //   endurance: user.cards.endurance.length,
-    //   charisma: user.cards.charisma.length,
-    //   intelligence: user.cards.intelligence.length,
-    //   agility: user.cards.agility.length,
-    //   luck: user.cards.luck.length,
-    //   "carry weight": user.cards.strength.length,
-    //   intimidation: user.cards.strength.length,
-    //   "heavy weapons": user.cards.strength.length,
-    //   accuracy: user.cards.perception.length,
-    //   lockpicking: user.cards.perception.length,
-    //   stealing: user.cards.perception.length,
-    //   awareness: user.cards.perception.length,
-    //   "poison resist": user.cards.endurance.length,
-    //   "rad resist": user.cards.endurance.length,
-    //   healing: user.cards.endurance.length,
-    //   toughness: user.cards.endurance.length,
-    //   "pet power": user.cards.charisma.length,
-    //   barter: user.cards.charisma.length,
-    //   persuasion: user.cards.charisma.length,
-    //   drinking: user.cards.charisma.length,
-    //   repair: user.cards.intelligence.length,
-    //   medicine: user.cards.intelligence.length,
-    //   science: user.cards.intelligence.length,
-    //   hacking: user.cards.intelligence.length,
-    //   "exp rate": user.cards.intelligence.length,
-    //   dodge: user.cards.agility.length,
-    //   "light weapons": user.cards.agility.length,
-    //   sneak: user.cards.agility.length,
-    //   ap: user.cards.agility.length,
-    //   "crit chance": user.cards.luck.length,
-    //   gambling: user.cards.luck.length,
-    //   "item find": user.cards.luck.length
-    // };
-    // for (stat in user.stats) {
-    //   if (user.stats.hasOwnProperty(stat) && stat !== "luck") {
-    //     user.stats[stat] = user.stats[stat] + (user.stats.luck/2);
-    //   }
-    // }
-    user.perknum = 0;
-    for (let perks in user.cards) {
-      if (user.cards.hasOwnProperty(perks)) {
-        user.perknum += user.cards[perks].length;
+    if(user.name == null) {
+      res.render("enter_chname", {user: user});
+    } else {
+        user.perknum = 0;
+        for (let perks in user.cards) {
+          if (user.cards.hasOwnProperty(perks)) {
+            user.perknum += user.cards[perks].length;
+          }
+        }
+        // console.log(user);
+        res.render("status", { user: user});
+    }
+   } catch(e) {
+    console.log(e)
+   }
+};
+exports.loadSkills = async (req, res) => {
+  try{
+    if(req.params.uuid == null) {
+      console.log("No uuid in request");
+    } else {
+      let user = await usersCollection.findOne({ uuid: req.params.uuid });
+      if(user.name == null) {
+        res.render("enter_chname", {user: user});
+      } else {
+          user.perknum = 0;
+          for (let perks in user.cards) {
+            if (user.cards.hasOwnProperty(perks)) {
+              user.perknum += user.cards[perks].length;
+            }
+          }
+          // console.log(user);
+          res.render("skills", { user: user});
       }
     }
-    // console.log(user);
-    res.render("status", { user: user});
    } catch(e) {
     console.log(e)
    }
@@ -172,7 +213,7 @@ exports.urlUpdate = async (req, res) => {
   try {
     await usersCollection.updateMany(
       { uuid: req.body.uuid },
-      { $set: { url: req.body.url } },
+      { $set: { url: req.body.url, slname: req.body.slname } },
       { upsert: true }
     );
     let message = "URL updated to: " + req.body.url;
@@ -183,20 +224,20 @@ exports.urlUpdate = async (req, res) => {
   }
 };
 
-exports.ipUpdate = async (req, res) => {
-  try {
-    await usersCollection.updateMany(
-      { uuid: req.body.uuid },
-      { $set: { ip: req.body.ip } },
-      { upsert: true }
-    );
-    let message = "IP updated to: " + req.body.ip;
-    console.log(message);
-    res.send(message);
-  } catch (e) {
-    console.log(e);
-  }
-};
+// exports.ipUpdate = async (req, res) => {
+//   try {
+//     await usersCollection.updateMany(
+//       { uuid: req.body.uuid },
+//       { $set: { ip: req.body.ip } },
+//       { upsert: true }
+//     );
+//     let message = "IP updated to: " + req.body.ip;
+//     console.log(message);
+//     res.send(message);
+//   } catch (e) {
+//     console.log(e);
+//   }
+// };
 
 var request = require("request");
 function send_req(url, postData) {

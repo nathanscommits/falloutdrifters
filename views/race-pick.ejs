@@ -36,7 +36,7 @@
 <div class="pancake-r">
     <p id="race-p1"></p>
     <p id="race-p2"></p>
-
+<!-- 
 <table>
     <tr>
         <td>STR</td>
@@ -54,7 +54,7 @@
         <% } %>
 
     </tr>
-</table>
+</table> -->
 <br>
 <div class="right-align">
     <a href="#" onclick="set_race()" class="navigation-button button">ACCEPT</a>
@@ -100,11 +100,11 @@
         document.getElementById("race-p1").innerHTML = p1;
         document.getElementById("race-p2").innerHTML = p2;
         document.getElementById("race-image").src = img;
-        let y = 0;
-        while( y < stats.length) {
-            document.getElementById("stat"+y).innerHTML = stats[y];
-            y++;
-        }
+        // let y = 0;
+        // while( y < stats.length) {
+        //     document.getElementById("stat"+y).innerHTML = stats[y];
+        //     y++;
+        // }
         
         var all = document.getElementsByClassName("active");
         for (var i = 0; i < all.length; i++) {
