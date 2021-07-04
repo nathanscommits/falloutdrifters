@@ -403,11 +403,20 @@ filter: brightness(0%);
   height: 100%;
 }
 .status-form  tr td{
-  width: 10%;
+  width: 5%;
   text-align: center;
   overflow: hidden;
 }
-
+.status-form  tr td img{
+  height: 100%;
+}
+progress {
+  background-color: var(--primary);
+  max-width: 5vw;
+}
+::-webkit-progress-bar {
+  background-color: rgba(0, 0, 0, 0.1);
+}
 
 @media only screen and (max-width: 700px) {
   /* body {
