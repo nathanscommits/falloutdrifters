@@ -20,10 +20,13 @@ router.get("/radio/:uuid", usersController.checkAccess, usersController.loadRadi
 router.get("/show/:uuid/:item_name/:item_desc", usersController.showItem);
 router.get("/showperk/:uuid/:item_name/:item_desc", usersController.showPerk);
 
-router.get("/race", usersController.pickRace);
 router.get("/", usersController.enterName); // change to home page or wiki or something
-router.post("/raceselected", usersController.raceSelected);
+// router.post("/raceselected", usersController.raceSelected);
+router.get("/entername/:uuid", usersController.enterName);
 router.post("/entername", usersController.enterName);
+router.post("/selectrace", usersController.pickRace);
+router.post("/selectorigin", usersController.pickOrigin);
+router.post("/selectspecial", usersController.pickSpecial);
 
 router.post("/urlupdate", usersController.urlUpdate);  
 router.post("/tokenupdate", usersController.accessGranted);

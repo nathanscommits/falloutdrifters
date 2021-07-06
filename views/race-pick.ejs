@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fallout Wormwood</title>
+    <title>Fallout Drifters</title>
     <link rel="icon" href="img/caps.svg" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
@@ -20,7 +20,6 @@
     <link href="/main.css" rel="stylesheet" />
   </head>
   <body> 
-      <div id="uuid-missing"></div>
 <div class="navigation">
   <a id="HUMAN-nav" onclick="change_race('HUMAN')" class="navigation-button">HUMAN</a>
   <a id="GHOUL-nav" onclick="change_race('GHOUL')" class="navigation-button">GHOUL</a>
@@ -36,76 +35,46 @@
 <div class="pancake-r">
     <p id="race-p1"></p>
     <p id="race-p2"></p>
-<!-- 
-<table>
-    <tr>
-        <td>STR</td>
-        <td>PER</td> 
-        <td>END</td>
-        <td>CHA</td>   
-        <td>INT</td>
-        <td>AGI</td>
-        <td>LUC</td>
-    </tr>
-    <tr>
-
-        <% let i = 0; while(i++ < 7) { %>
-        <td id="stat<%= (i -1) %>">0</td>
-        <% } %>
-
-    </tr>
-</table> -->
 <br>
 <div class="right-align">
     <a href="#" onclick="set_race()" class="navigation-button button">ACCEPT</a>
 </div>
 </div>
 </div>
-<div id="datadiv" data-test="<%= JSON.stringify(error) %>"></div>
-<div id="uuiddiv" data-test="<%= JSON.stringify(uuid) %>"></div>
+<div id="uuiddiv" data-test="<%= user.uuid %>"></div>
+<div id="namediv" data-test="<%= user.name %>"></div>
 <script>
-    let error = document.getElementById('datadiv').dataset.test;
     let UUID = document.getElementById('uuiddiv').dataset.test;
-    if(error !== "") {
-        document.getElementById("uuid-missing").innerHTML = error;
-    }
+    let NAME = document.getElementById('namediv').dataset.test;
     let RACE = "HUMAN";
-    let stats = [];
     let change_race = (race) => {
         RACE = race;
         let p1;
         let p2;
         let img;
         if(race == "HUMAN"){
-            stats = ["-2", "+0", "-1", "+2", "+1", "+1", "+2"]
             img = "/img/human.jpg";
-            p1 = "Humans, the dominant species before the war and still afterwards. Their sheer will and determination make them dangerous alone, but together they can accomplish almost anything. As a species, they thrive when under pressure and tend to have an intimate relationship with luck."
-            p2 = "While most humans try to reclaim the world from before the war, many have returned to a more tribal state. They are the only species observed practising this behaviour of reversion and have developed some rather interesting beliefs and governing systems. In some cases, even entirely new languages have been developed along with ritualistic practices and superstition."
+            p1 = UUID;
+            p2 = NAME;
+            // p1 = "Humans, the dominant species before the war and still afterwards. Their sheer will and determination make them dangerous alone, but together they can accomplish almost anything. As a species, they thrive when under pressure and tend to have an intimate relationship with luck."
+            // p2 = "While most humans try to reclaim the world from before the war, many have returned to a more tribal state. They are the only species observed practising this behaviour of reversion and have developed some rather interesting beliefs and governing systems. In some cases, even entirely new languages have been developed along with ritualistic practices and superstition."
         } else if(race == "GHOUL") {
-            stats = ["+0", "+1", "+1", "-2", "+2", "-1", "+2"]
             img = "/img/ghoul.jpg";
-            p1 = "Ghouls are the result of a human that has been exposed to exorbitant amounts of radiation, surviving the process. Most of their soft tissue and hair do not, however, as their DNA is fossilized by the barrage of exotic particles resulting in a post-human state known as ‘ghoulification’."
+            p1 = "Trait: Necrotic Post-Human. You are immune to radiation damage. In fact, you’re healed by it—you regain 1 HP for every 3 points of radiation damage inflicted upon you, and if you rest in an irradiated location, you may re-roll your dice pool when checking if your injuries heal. In addition, Survival becomes a Tag skill, increasing it by 2 ranks."
             p2 = "The most widely known source of ghouls in the region were a result of a vault-tec experiment being conducted at Vault 12. Located under Bakersfield, California, also known as the Necropolis, the vault door was designed to unseal and expose the inhabitants to the radiation fallout outside. Every occupant was killed or transformed into a ghoul and those that survived still roam the countryside."
         } else if(race == "SYNTH") {
-            stats = ["+1", "+2", "+2", "-1", "+1", "-2", "+0"]
             img = "/img/robot.jpg";
             p1 = "Robots/Gen-2 Synths.  From the aptly named Mister Handy to the workhorse Protectron, robots have been a staple in American life. Built to last, these mechanical servants have weathered everything war-torn Earth has thrown at them and still perform their primary functions even now."
             p2 = "Robots had been constructed by pre-War society to fill all niches and occupations. From general-purpose utility droids to full-fledged military battle machines, robots could be found in almost any environment and function."
         } else if(race == "MUTANT") {
-            stats = ["+2", "+0", "+2", "-1", "-2", "+1", "+1"]
             img = "/img/supermutant.jpg";
-            p1 = "Super Mutants are humans mutated by viral experiments. Green, massive and aggressive, they torment the wastes, raiding and hunting. A small few band together in crude tribes, but generally they are wanderers."
+            p1 = "Trait: Forced Evolution. Your initial Strength and Endurance attributes are increased by +2 each, and your maximum Strength and Endurance are increased to 12, but your maximum Intelligence and Charisma are both reduced to 6. You may not have more than 4 ranks in any skill. You are completely immune to radiation and poison damage."
             p2 = "Super Mutants excell in almost all areas of combat but generally have low IQ's and have trouble making friends."
         }
         document.getElementById("race-p1").innerHTML = p1;
         document.getElementById("race-p2").innerHTML = p2;
         document.getElementById("race-image").src = img;
-        // let y = 0;
-        // while( y < stats.length) {
-        //     document.getElementById("stat"+y).innerHTML = stats[y];
-        //     y++;
-        // }
-        
+
         var all = document.getElementsByClassName("active");
         for (var i = 0; i < all.length; i++) {
           all[i].classList.remove("active");
@@ -136,7 +105,7 @@
     }
 
     let set_race = () => {
-        post('/raceselected', {race: RACE, uuid: UUID})
+        post('/selectorigin', {race: RACE, uuid: UUID, name: NAME})
     }
     
 </script>

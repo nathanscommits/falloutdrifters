@@ -21,9 +21,10 @@
   </head>
   <body>
       <div class="center-div">
-    <form action="/newname" method="post">
+    <form action="/selectrace" method="post">
         <label for="name">PICK A NAME:</label>
         <input type="text" id="name" name="name">
+        <input type="hidden" name="uuid" value="<%= uuid %>">
         <input type="submit" value=">">
     </form>
 </div>

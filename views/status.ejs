@@ -12,21 +12,17 @@
       <div class="item inventory-list">
         <table style="width: 100%">
 
-
           <%  
-          for (var stat in user.stats) {
-            if (user.stats.hasOwnProperty(stat)) {
-              
+          for (var key in user) {
+            //if (user.hasOwnProperty(stat)) { 
           %>
           <tr class="hover-green">
-            <td style="text-transform: uppercase;"><%= stat %></td>
-            <td><%= user.stats[stat] %></td>
+            <td style="text-transform: uppercase;"><%= key %></td>
+            <td style="max-width: 30vw;"><%= user[key] %></td>
           </tr>
 
-          <%} } %>
-          
-          
-
+          <% } %>
+      
         </table>
       </div>
       <div class="item-display item">
@@ -34,37 +30,20 @@
           <table class="status-form">
             <tr>
               <td> </td>
-              <td>
-                <progress id="file" value="32" max="100"> 32% </progress>
-                </td>
+              <td>HEAD<br> <progress id="file" value="100" max="100"> 32% </progress> </td>
               <td> </td>
               </tr>
             <tr>
-              <td>
-                <progress value="0" max="100"></progress>
-                </td>
-              <td><img
-          id="selected-item-image"
-          src="/img/walk.gif"
-        /></td>
-              <td>
-                <progress value="32" max="100"></progress>
-                </td>
+              <td>L-ARM<br><progress value="0" max="100"></progress></td>
+              <td><img id="selected-item-image" src="/img/walk.gif"/></td>
+              <td>R-ARM<br><progress value="32" max="100"></progress></td>
             </tr>
             <tr>
-              <td>
-                <progress value="32" max="100"></progress>
-                </td>
-              <td>
-                <progress value="32" max="100"></progress>
-                </td>
-              <td>
-                <progress value="32" max="100"></progress>
-                </td>
+              <td>L-LEG<br><progress value="32" max="100"></progress></td>
+              <td>BODY<br><progress value="32" max="100"></progress></td>
+              <td>R-LEG<br><progress value="32" max="100"></progress></td>
             </tr>
-
           </table>
-        
         </div>
       </div>
     </div>

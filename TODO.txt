@@ -1,0 +1,11 @@
+TODO
+* Character creation
+    \-pick name
+    \-select race
+    \-select origin
+        \-able to pick up to 2 traits but no less than 1
+    \-select traits
+    IN PROGRESS-select SPECIAL 
+    -select skills/tags
+    -pick perks
+    -pick gear

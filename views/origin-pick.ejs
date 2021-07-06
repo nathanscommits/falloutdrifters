@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fallout Drifters</title>
+    <link rel="icon" href="img/caps.svg" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+      crossorigin="anonymous"
+    />
+    <link href="/main.css" rel="stylesheet" />
+  </head>
+  <body> 
+
+    <!--
+if(origin == 'HUMAN') load human origins...
+
+    -->
+
+<div class="navigation">
+  <a id="SURVIVOR-nav" onclick="change_origin('SURVIVOR')" class="navigation-button">SURVIVOR</a>
+  <a id="VAULT-DWELLER-nav" onclick="change_origin('VAULT-DWELLER')" class="navigation-button">VAULT-DWELLER</a>
+  <a id="BROTHERHOOD-nav" onclick="change_origin('BROTHERHOOD')" class="navigation-button">BROTHERHOOD</a>
+</div>
+
+<div class="pancake-stack">
+<div class="pancake-l">
+    <!-- <div></div> -->
+    <img id="origin-image" src="/img/slags.jpg" alt="">
+</div>
+<div class="pancake-r">
+    <p id="origin-p1"></p>
+    <p id="origin-p2"></p>
+    <div id="trait-select">
+      <div class="navigation">
+        <a id="EDUCATED-nav" onclick="change_trait('EDUCATED')" class="trait-button navigation-button">EDUCATED</a>
+        <a id="FAST_SHOT-nav" onclick="change_trait('FAST_SHOT')" class="trait-button navigation-button">FAST SHOT</a>
+        <a id="GIFTED-nav" onclick="change_trait('GIFTED')" class="trait-button navigation-button">GIFTED</a>
+        <a id="HEAVY_HANDED-nav" onclick="change_trait('HEAVY_HANDED')" class="trait-button navigation-button">HEAVY HANDED</a>
+        <a id="SMALL_FRAME-nav" onclick="change_trait('SMALL_FRAME')" class="trait-button navigation-button">SMALL FRAME</a>
+        <a id="PSYKER-nav" onclick="change_trait('PSYKER')" class="trait-button navigation-button">PSYKER</a>
+        <a id="GEN-3-nav" onclick="change_trait('GEN-3')" class="trait-button navigation-button">GEN-3</a>
+      </div>
+      <table id="trait-table" class="trait-table">
+        <tr>
+          <th>BENEFIT</th>
+          <th>PENALTY</th>
+        </tr>
+        <tr>
+          <td class="trait-info" id="trait-benefit"></td>
+          <td class="trait-info" id="trait-penalty"></td>
+        </tr>
+      </table>
+    </div>
+<br>
+<div class="right-align">
+    <a href="#" onclick="set_origin()" class="navigation-button button">ACCEPT</a>
+</div>
+</div>
+</div>
+<div id="uuiddiv" data-test="<%= user.uuid %>"></div>
+<div id="namediv" data-test="<%= user.name %>"></div>
+<script>
+    let UUID = document.getElementById('uuiddiv').dataset.test;
+    let NAME = document.getElementById('namediv').dataset.test;
+    let ORIGIN = "SURVIVOR";
+    let TRAIT_1 = "";
+    let TRAIT_2 = "";
+    let change_trait = (trait) => {
+      if(trait == TRAIT_1) {
+        document.getElementById(TRAIT_1+"-nav").classList.remove("active");
+        TRAIT_1 = "";
+        return;
+      } else if(trait == TRAIT_2) {
+        document.getElementById(TRAIT_2+"-nav").classList.remove("active");
+        TRAIT_2 = "";
+        return;
+      }
+
+      if(TRAIT_1 == "") TRAIT_1 = trait;
+      else TRAIT_2 = trait;
+
+      if(TRAIT_2 != "" || TRAIT_1 != "") {
+        document.getElementById("trait-table").style.visibility = "visible";
+        document.getElementById("trait-benefit").classList.add("trait-info");
+              document.getElementById("trait-penalty").classList.add("trait-info");
+      } else {
+        document.getElementById("trait-table").style.visibility = "hidden";
+      }
+      
+      let trait_benefit;
+      let trait_penalty;
+      if(trait == "EDUCATED") {
+        trait_benefit= "You have one additional tag skill"
+        trait_penalty = "When you fail a skill test using a skill other than a tag skill, the GM gains 1 AP"
+      } else if(trait == "FAST_SHOT") {
+        trait_benefit= "If you take a second major action in combat, and use it to make a ranged attack, the additional major action only costs 1 AP, rather than 2."
+        trait_penalty = "You cannot benefit from the Aim minor action—you’re too impatient."
+      } else if(trait == "GIFTED") {
+        trait_benefit= "Choose two S.P.E.C.I.A.L. attributes and increase them by +1 each."
+        trait_penalty = "Your maximum number of Luck points is one fewer than your Luck attribute."
+      } else if(trait == "HEAVY_HANDED") {
+        trait_benefit= "our Melee Damage bonus increases by +1CD."
+        trait_penalty = "Your melee and unarmed attacks suffer a complication on a 19 or 20, rather than only a 20."
+      } else if(trait == "SMALL_FRAME") {
+        trait_benefit= "You may re-roll 1d20 on all AGI tests which rely on balance or contortion"
+        trait_penalty = "Your carry weight is 150 + (5 x STR) lbs., rather than 150 + (10 x STR) lbs."
+      } else if(trait == "PSYKER") {
+        trait_benefit= "You can spend AP or luck points to attempt to read someones mind or have a vision of the future, the player or ST can choose to divulge information to you or not."
+        trait_penalty = "Psykers are not widely liked and you may be treated poorly or hunted if you are discovered."
+      } else if(trait == "GEN-3") {
+        trait_benefit= "You are immune to poison"
+        trait_penalty = "You don't receive benefits from food or drink"
+      }
+
+      document.getElementById("trait-benefit").innerHTML = trait_benefit;
+      document.getElementById("trait-penalty").innerHTML = trait_penalty;
+
+      var all  = document.getElementsByClassName("trait-button");
+        for (var i = 0; i < all.length; i++) {
+          all[i].classList.remove("active");
+        }
+        document.getElementById(TRAIT_1+"-nav").classList.add("active");
+        document.getElementById(TRAIT_2+"-nav").classList.add("active");
+
+    }
+    let change_origin = (origin) => {
+        ORIGIN = origin;
+        let p1;
+        let p2;
+        let img;
+        document.getElementById("trait-select").style.visibility = "hidden";
+        document.getElementById("trait-select").style.height = "0%";
+        document.getElementById("trait-benefit").classList.remove("trait-info");
+        document.getElementById("trait-penalty").classList.remove("trait-info");
+        
+        if(origin == "BROTHERHOOD"){
+            img = "/img/beastlord.jpg";
+            p1 = "Trait: The Chain that Binds.<br>You gain one additional Tag skill, which must be one of Energy Weapons, Science, or Repair"
+            p2 = "MORE INFO HERE"
+            TRAIT_1 = "";
+            TRAIT_2 = "";
+            document.getElementById("trait-table").style.visibility = "hidden";
+        } else if(origin == "SURVIVOR") {
+            document.getElementById("trait-select").style.visibility = "visible";
+            document.getElementById("trait-select").style.height = "auto";
+            if(TRAIT_2 != "" || TRAIT_1 != "") {
+              document.getElementById("trait-benefit").classList.add("trait-info");
+              document.getElementById("trait-penalty").classList.add("trait-info");
+              document.getElementById("trait-table").style.visibility = "visible";
+            } else {
+              document.getElementById("trait-table").style.visibility = "hidden";
+            }
+            img = "/img/slags.jpg";
+            p1 = "Traits: You may choose two of the following traits, or one trait and one additional perk. Each trait has a benefit and may have an accompanying penalty"
+            p2 = "TRAIT INFO HERE"
+        } else if(origin == "VAULT-DWELLER") {
+            img = "/img/cyborg.jpg";
+            p1 = "Trait: Vault Kid.<br>Your healthier start to life at the hands of trained doctors and sophisticated auto-docs means you reduce the difficulty of all END tests to resist the effects of disease. In addition, your carefully-planned upbringing means you have one additional tag skill of your choice. "
+            p2 = "MORE INFO HERE"
+            TRAIT_1 = "";
+            TRAIT_2 = "";
+            document.getElementById("trait-table").style.visibility = "hidden";
+        } 
+        document.getElementById("origin-p1").innerHTML = p1;
+        document.getElementById("origin-p2").innerHTML = p2;
+        document.getElementById("origin-image").src = img;
+
+        
+        var all = document.getElementsByClassName("active");
+        for (var i = 0; i < all.length; i++) {
+          all[i].classList.remove("active");
+        }
+
+        document.getElementById(origin+"-nav").classList.add("active");
+    }
+
+    window.onload = change_origin('SURVIVOR');
+    
+    function post(path, params, method='post') {
+        const form = document.createElement('form');
+        form.method = method;
+        form.action = path;
+        
+        for (const key in params) {
+            if (params.hasOwnProperty(key)) {
+                const hiddenField = document.createElement('input');
+                hiddenField.type = 'hidden';
+                hiddenField.name = key;
+                hiddenField.value = params[key];
+                
+                form.appendChild(hiddenField);
+            }
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    let set_origin = () => {
+        post('/selectspecial', {origin: ORIGIN, uuid: UUID, name: NAME, trait_1: TRAIT_1, trait_2: TRAIT_2})
+    }
+    
+</script>
+  </body>
+</html>

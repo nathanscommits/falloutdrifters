@@ -190,7 +190,7 @@ body {
   font-size: 1.5vw;
   font-size: calc(12px + 1vw);
   padding: .5%;
-  width: 12.5%;
+  min-width: 12.5%;
   margin: .5%;
   text-align: center;
   background-color: black;
@@ -198,6 +198,11 @@ body {
   text-decoration: none;
   color: var(--primary);
   cursor: pointer;
+}
+
+#trait-select .navigation-button {
+  font-size: 0.5vw;
+  font-size: calc(12px + 0.5vw);
 }
 
 .navigation-button:active {
@@ -275,11 +280,25 @@ hr {
 td {
   padding: 1%;
 }
+
+.list-button{
+  width: 100%;
+  background-color: var(--primary);
+  color: #000;
+  border: none;
+}
+
+.list-button:hover {
+  cursor: pointer;
+  background-color: #000;
+  color:  var(--primary);
+}
+
 .hover-green:hover {
   cursor: pointer;
   background-color: var(--primary);
   color: black;
-}
+} 
 .hover-green-active {
   /* background-color: var(--primary); */
   /* border-bottom: 4px var(--primary) solid; */
@@ -417,6 +436,15 @@ progress {
 ::-webkit-progress-bar {
   background-color: rgba(0, 0, 0, 0.1);
 }
+
+.trait-info {
+  text-align: left;
+  padding: 1%;
+  border-left: var(--primary) solid 4px;
+}
+
+
+
 
 @media only screen and (max-width: 700px) {
   /* body {

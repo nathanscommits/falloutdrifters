@@ -56,7 +56,8 @@ exports.accessGranted = async (req, res) => {
 
 exports.enterName = async (req, res) => {
   try{
-    res.render('enter_slname');
+    let uuid = req.params.uuid;
+    res.render('enter_chname', {uuid: uuid});
   } catch(e){
     console.log(e)
   }
@@ -136,7 +137,7 @@ exports.loadStatus = async (req, res) => {
   try{
     let user = await usersCollection.findOne({ uuid: req.params.uuid });
     if(user.name == null) {
-      res.render("enter_chname", {user: user});
+      res.render("enter_chname", {uuid: user.uuid});
     } else {
         user.perknum = 0;
         for (let perks in user.cards) {
@@ -158,7 +159,7 @@ exports.loadSkills = async (req, res) => {
     } else {
       let user = await usersCollection.findOne({ uuid: req.params.uuid });
       if(user.name == null) {
-        res.render("enter_chname", {user: user});
+        res.render("enter_chname", {uuid: user.uuid});
       } else {
           user.perknum = 0;
           for (let perks in user.cards) {
@@ -295,25 +296,74 @@ exports.showPerk = async (req, res, next) => {
   }
 };
 
-exports.pickRace = async (req, res, next) => {
+exports.pickRace = async (req, res) => {
   let uuid = req.body.uuid;
-  let error;
   try{
-    let user = await usersCollection.findOne({ uuid: req.body.uuid });
-    if(user && 'uuid' in user) {
-      error = "User already exists";
-    }else if(uuid == null){
-      error = "UUID not found";
+    if(uuid == null){
+      console.log("UUID not found")
+    } else {
+      console.log(req.body)
+      if(req.body.name != null) await usersCollection.updateOne({uuid: uuid}, {$set: {name: req.body.name}}, {upsert: true})
+      let user = await usersCollection.findOne({ uuid: uuid }, { projection: { _id: 0, name: 1, slname: 1, uuid: 1 } });
+      console.log(user)
+      res.render('race-pick', {user: user});
     }
   } catch(e) {
     console.log(e)
   }
-
-
-  res.render("race-pick", {uuid: uuid, error: error})
 }
 
-exports.raceSelected = async (req, res, next) => {
+exports.pickOrigin = async (req, res) => {
+  let uuid = req.body.uuid;
+  try{
+    if(uuid == null){
+      console.log("UUID not found")
+    } else {
+      console.log(req.body)
+      if(req.body.name != null && uuid != null) await usersCollection.updateOne({uuid: uuid, name: req.body.name}, {$set: {race: req.body.race}}, {upsert: true})
+      let user = await usersCollection.findOne({ uuid: uuid }, { projection: { _id: 0, name: 1, slname: 1, uuid: 1, race: 1 } });
+      if(req.body.race == "HUMAN"){
+        res.render('origin-pick', {user: user});
+      } else if(req.body.race == "ROBOT"){
+        res.render('robot-builder', {user: user});
+      } else {
+        console.log("No race found")
+      }
+    }
+  } catch(e) {
+    console.log(e)
+  }
+}
+
+exports.pickSpecial = async (req, res) => {
+  let uuid = req.body.uuid;
+  try{
+    if(uuid == null){
+      console.log("UUID not found")
+    } else {
+      console.log(req.body)
+      if(req.body.name != null && uuid != null) await usersCollection.updateOne({uuid: uuid, name: req.body.name}, {$set: {origin: req.body.origin, traits: [req.body.trait_1, req.body.trait_2]}}, {upsert: true})
+      let user = await usersCollection.findOne({ uuid: uuid }, { projection: { _id: 0, traits: 1, uuid: 1, name: 1, race: 1, origin: 1 } });
+      user.stats = {}
+      user.stats.special = {
+        str: 4,
+        per: 4,
+        end: 4,
+        cha: 4,
+        int: 4,
+        agi: 4,
+        lck: 4
+      };
+      user.special_points = 12;
+        res.render('special-pick', {user: user});
+     
+    }
+  } catch(e) {
+    console.log(e)
+  }
+}
+
+exports.raceSelected = async (req, res) => {
   let uuid = req.body.uuid;
   let race = req.body.race;
   let stats = req.body.stats;
@@ -333,9 +383,6 @@ exports.raceSelected = async (req, res, next) => {
   } catch(e) {
     console.log(e)
   }
-
-
-  res.render("race-pick", {uuid: uuid, error: error})
 }
 
 let createNewUser = async (race, uuid, race_stats) => {
